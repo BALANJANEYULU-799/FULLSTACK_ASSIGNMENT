@@ -1,0 +1,63 @@
+{
+  "users": [
+    {
+      "uid": "1742525526614",
+      "name": "dulapalli mohan venkat",
+      "email": "mohanvenkatdulapalli@gmail.com",
+      "password": "$2b$10$5i0vBw3uCtO.S.xnD4GZO.dcn6mYCRJE7bKrbDLQtFbpG6OMzCuOy",
+      "role": "student",
+      "submittedAssignments": []
+    },
+    {
+      "uid": "1742526477216",
+      "name": "Leela",
+      "email": "Leela@gmail.com",
+      "password": "$2b$10$5UW.bX6mJO9vAOIXSTUibu9WQLeWLkqBadIosQN7920GeNuBtfC0G",
+      "role": "student",
+      "submittedAssignments": []
+    },
+    {
+      "uid": "1742526543763",
+      "name": "Leela2",
+      "email": "Leela1@gmail.com",
+      "password": "$2b$10$zQMylDDW1whzVAzERLn5OuoDaTKwnOPtt9iAQwu.jiJLKn0Kh0hPK",
+      "role": "teacher"
+    }
+  ],
+  "assignments": [],
+  "messages": [
+    {
+      "id": "1742526505711",
+      "from": "1742526477216",
+      "to": "teacher",
+      "text": "hello sir",
+      "date": "2025-03-21T03:08:25.700Z"
+    },
+    {
+      "id": "1742665640581",
+      "text": "hi all",
+      "senderId": "1742526543763",
+      "isBulk": true,
+      "timestamp": "2025-03-22T17:47:20.576Z"
+    }
+  ],
+  "doubts": [],
+  "tasks": [],
+  "classes": [
+    {
+      "id": "1742527230570",
+      "title": "classes",
+      "teacher": "1742526543763",
+      "date": "2025-03-21T03:20:30.556Z",
+      "material": "classes_material.pdf"
+    }
+  ],
+  "announcements": []
+}itle": "classes",
+      "teacher": "1742526543763",
+      "date": "2025-03-21T03:20:30.556Z",
+      "material": "classes_material.pdf"
+    }
+  ],
+  "announcements": []
+}

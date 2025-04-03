@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANUSASANA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <ul class="circles">
+        <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+    </ul>
+
+    <div id="app">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="branding">
+                <span>A</span><span>N</span><span>U</span><span>S</span><span>A</span><span>S</span><span>A</span><span>N</span><span>A</span>
+            </div>
+            <div class="auth-buttons">
+                <button onclick="switchScreen('register-screen')"><i class="fas fa-user-plus"></i> Register</button>
+                <button onclick="switchScreen('login-screen')"><i class="fas fa-sign-in-alt"></i> Login</button>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <div class="content-box">
+                <h1><span>A</span><span>N</span><span>U</span><span>S</span><span>A</span><span>S</span><span>A</span><span>N</span><span>A</span></h1>
+                <p>Your personal knowledge management system</p>
+                <div class="highlights">
+                    <div class="highlight-card">
+                        <i class="fas fa-brain fa-3x"></i>
+                        <h3>Knowledge Organization</h3>
+                        <p>Organize your thoughts and ideas seamlessly</p>
+                    </div>
+                    <div class="highlight-card">
+                        <i class="fas fa-chart-line fa-3x"></i>
+                        <h3>Track Progress</h3>
+                        <p>Monitor your learning journey</p>
+                    </div>
+                    <div class="highlight-card">
+                        <i class="fas fa-users fa-3x"></i>
+                        <h3>Collaborative Learning</h3>
+                        <p>Connect with peers and educators</p>
+                    </div>
+                    <div class="highlight-card">
+                        <i class="fas fa-mobile-alt fa-3x"></i>
+                        <h3>Access Anywhere</h3>
+                        <p>Learn on any device, anytime</p>
+                    </div>
+                </div>
+                <div class="register-highlight">
+                    <p>Ready to boost your learning productivity?</p>
+                    <button onclick="switchScreen('register-screen')"><i class="fas fa-rocket"></i> Get Started Now</button>
+                </div>
+            </div>
+            <footer>
+                <p>© 2025 ANUSASANA. All rights reserved.</p>
+                <p><a href="#">Contact Us</a> | <a href="#">Privacy Policy</a> | <a href="#">Support</a> | <a href="#">About</a></p>
+                <p>Email: support@anusasana.com | Phone: +1-800-123-4567</p>
+            </footer>
+        </div>
+
+        <!-- Register Screen -->
+        <div id="register-screen" class="screen">
+            <div class="auth-panel">
+                <h2>Register</h2>
+                <form class="dashboard-form" onsubmit="handleRegister(event); return false;">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="reg-name" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="reg-email" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="reg-password" placeholder="Password" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-user-tag"></i>
+                        <select id="reg-role" required>
+                            <option value="" disabled selected>Select Role</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-university"></i>
+                        <input type="text" id="reg-college" placeholder="College/School Name" required>
+                    </div>
+                    <button type="submit" id="register-btn"><i class="fas fa-user-plus"></i> Register <span class="spinner hidden"></span></button>
+                </form>
+                <p id="auth-message" class="auth-message"></p>
+                <button class="small-btn" onclick="switchScreen('home-screen')"><i class="fas fa-arrow-left"></i> Back</button>
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="login-screen" class="screen">
+            <div class="auth-panel">
+                <h2>Login</h2>
+                <form class="dashboard-form" onsubmit="handleLogin(event); return false;">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="login-email" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="login-password" placeholder="Password" required>
+                    </div>
+                    <button type="submit"><i class="fas fa-sign-in-alt"></i> Login <span class="spinner hidden"></span></button>
+                </form>
+                <p id="login-message" class="auth-message"></p>
+                <button class="small-btn" onclick="switchScreen('home-screen')"><i class="fas fa-arrow-left"></i> Back</button>
+            </div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="student-dashboard" class="screen">
+            <div class="card">
+                <div class="card-header" onclick="toggleCard(this)">Profile</div>
+                <div class="card-content">
+                    <p>Name: <span id="student-profile-name"></span></p>
+                    <p>College: <span id="student-profile-college"></span></p>
+                    <p>Mentor: <span id="student-profile-mentor"></span></p>
+                    <select id="student-mentor-select" onchange="selectMentor()">
+                        <option value="">Select a Mentor</option>
+                    </select>
+                    <button onclick="logout()">Logout</button>
+                </div>
+            </div>
+            <div class="dashboard-container">
+                <div class="sidebar">
+                    <h2>Welcome, <span id="student-dashboard-name"></span></h2>
+                    <ul>
+                        <li class="active" onclick="showStudentSection('assignments')"><i class="fas fa-tasks"></i> Assignments</li>
+                        <li onclick="showStudentSection('grades')"><i class="fas fa-graduation-cap"></i> Grades</li>
+                        <li onclick="showStudentSection('classes')"><i class="fas fa-book"></i> Classes</li>
+                        <li onclick="showStudentSection('messages')"><i class="fas fa-envelope"></i> Messages</li>
+                        <li onclick="showStudentSection('announcements')"><i class="fas fa-bullhorn"></i> Announcements</li>
+                        <li onclick="showStudentSection('doubts')"><i class="fas fa-question-circle"></i> Ask a Doubt</li>
+                        <li onclick="showStudentSection('calendar')"><i class="fas fa-calendar"></i> Calendar</li>
+                        <li onclick="showStudentSection('overview')"><i class="fas fa-chart-bar"></i> Overview</li>
+                        <li onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+                    </ul>
+                </div>
+                <div class="main-content">
+                    <div id="student-assignments" class="content-panel active">
+                        <h3>Assignments</h3>
+                        <form class="dashboard-form" onsubmit="submitAssignment(event); return false;">
+                            <input type="text" id="assignment-name" placeholder="Assignment Name" required>
+                            <input type="file" id="assignment-file" accept="image/*" required>
+                            <button type="submit" class="small-btn"><i class="fas fa-upload"></i> Submit</button>
+                        </form>
+                        <div id="student-assignments-list"></div>
+                    </div>
+                    <div id="student-grades" class="content-panel">
+                        <h3>My Grades</h3>
+                        <div id="student-grades-list"></div>
+                    </div>
+                    <div id="student-classes" class="content-panel">
+                        <h3>Classes</h3>
+                        <div id="student-classes-list"></div>
+                    </div>
+                    <div id="student-messages" class="content-panel">
+                        <h3>Messages</h3>
+                        <div id="student-messages-list"></div>
+                        <form class="dashboard-form" onsubmit="sendMessage(event); return false;">
+                            <textarea id="message-text" placeholder="Reply to teacher..." required></textarea>
+                            <button type="submit" class="small-btn"><i class="fas fa-paper-plane"></i> Send</button>
+                        </form>
+                    </div>
+                    <div id="student-announcements" class="content-panel">
+                        <h3>Announcements</h3>
+                        <div id="student-announcements-list"></div>
+                    </div>
+                    <div id="student-doubts" class="content-panel">
+                        <h3>Ask a Doubt</h3>
+                        <form class="dashboard-form" onsubmit="askDoubt(event); return false;">
+                            <textarea id="doubt-text" placeholder="Ask your question..." required></textarea>
+                            <button type="submit" class="small-btn"><i class="fas fa-question-circle"></i> Ask</button>
+                        </form>
+                        <div id="doubt-response"></div>
+                    </div>
+                    <div id="student-calendar" class="content-panel">
+                        <h3>Calendar</h3>
+                        <div id="student-calendar-list"></div>
+                    </div>
+                    <div id="student-overview" class="content-panel">
+                        <h3>Overview</h3>
+                        <div class="overview">
+                            <div class="overview-item"><h3>Total Assignments</h3><p id="total-assignments">0</p></div>
+                            <div class="overview-item"><h3>Submitted</h3><p id="submitted-assignments">0</p></div>
+                            <div class="overview-item"><h3>Average Score</h3><p id="average-score">N/A</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher Dashboard -->
+        <div id="teacher-dashboard" class="screen">
+            <div class="dashboard-container">
+                <div class="sidebar">
+                    <h2>Welcome, <span id="teacher-dashboard-name"></span></h2>
+                    <ul>
+                        <li class="active" onclick="showTeacherSection('tasks')"><i class="fas fa-tasks"></i> Assign Tasks</li>
+                        <li onclick="showTeacherSection('submissions')"><i class="fas fa-file-alt"></i> Submissions</li>
+                        <li onclick="showTeacherSection('classes')"><i class="fas fa-book"></i> Upload Class</li>
+                        <li onclick="showTeacherSection('announcements')"><i class="fas fa-bullhorn"></i> Announcements</li>
+                        <li onclick="showTeacherSection('messages')"><i class="fas fa-envelope"></i> Messages</li>
+                        <li onclick="showTeacherSection('doubts')"><i class="fas fa-question-circle"></i> Student Doubts</li>
+                        <li onclick="showTeacherSection('analytics')"><i class="fas fa-chart-bar"></i> Analytics</li>
+                        <li onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+                    </ul>
+                </div>
+                <div class="main-content">
+                    <div id="teacher-tasks" class="content-panel active">
+                        <h3>Assign Task</h3>
+                        <form class="dashboard-form" onsubmit="assignTask(event); return false;">
+                            <input type="text" id="task-name" placeholder="Task Name" required>
+                            <input type="date" id="task-due-date" required>
+                            <button type="submit" class="small-btn"><i class="fas fa-plus"></i> Assign</button>
+                        </form>
+                    </div>
+                    <div id="teacher-submissions" class="content-panel">
+                        <h3>Student Submissions</h3>
+                        <div id="teacher-assignments"></div>
+                    </div>
+                    <div id="teacher-classes" class="content-panel">
+                        <h3>Upload Class</h3>
+                        <form class="dashboard-form" onsubmit="uploadClass(event); return false;">
+                            <input type="text" id="class-title" placeholder="Class Title" required>
+                            <button type="submit" class="small-btn"><i class="fas fa-upload"></i> Upload</button>
+                        </form>
+                    </div>
+                    <div id="teacher-announcements" class="content-panel">
+                        <h3>Post Announcement</h3>
+                        <form class="dashboard-form" onsubmit="postAnnouncement(event); return false;">
+                            <textarea id="announcement-text" placeholder="Share an update..." required></textarea>
+                            <button type="submit" class="small-btn"><i class="fas fa-bullhorn"></i> Post</button>
+                        </form>
+                    </div>
+                    <div id="teacher-messages" class="content-panel">
+                        <h3>Messages</h3>
+                        <div id="teacher-messages-list"></div>
+                        <form class="dashboard-form" onsubmit="sendBulkMessage(event); return false;">
+                            <textarea id="bulk-message-text" placeholder="Message all students..." required></textarea>
+                            <button type="submit" class="small-btn"><i class="fas fa-paper-plane"></i> Send Bulk</button>
+                        </form>
+                    </div>
+                    <div id="teacher-doubts" class="content-panel">
+                        <h3>Student Doubts</h3>
+                        <div id="teacher-doubts-list"></div>
+                    </div>
+                    <div id="teacher-analytics" class="content-panel">
+                        <h3>Class Analytics</h3>
+                        <div id="teacher-analytics-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chatbot -->
+        <div class="chatbot hidden" id="chatbot">
+            <div class="chatbot-header">
+                <h3>Smart Assistant</h3>
+                <button class="small-btn" onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chatbot-body" id="chatbot-messages"></div>
+            <form class="chatbot-form" onsubmit="sendChatMessage(event); return false;">
+                <input type="text" id="chat-input" placeholder="Ask me anything...">
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANUSASANA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <ul class="circles">
+        <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+    </ul>
+
+    <div id="app">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="branding">
+                <span>A</span><span>N</span><span>U</span><span>S</span><span>A</span><span>S</span><span>A</span><span>N</span><span>A</span>
+            </div>
+            <div class="auth-buttons">
+                <button onclick="switchScreen('register-screen')"><i class="fas fa-user-plus"></i> Register</button>
+                <button onclick="switchScreen('login-screen')"><i class="fas fa-sign-in-alt"></i> Login</button>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <div class="content-box">
+                <h1><span>A</span><span>N</span><span>U</span><span>S</span><span>A</span><span>S</span><span>A</span><span>N</span><span>A</span></h1>
+                <p>Your personal knowledge management system</p>
+                <div class="highlights">
+                    <div class="highlight-card">
+                        <i class="fas fa-brain fa-3x"></i>
+                        <h3>Knowledge Organization</h3>
+                        <p>Organize your thoughts and ideas seamlessly</p>
+                    </div>
+                    <div class="highlight-card">
+                        <i class="fas fa-chart-line fa-3x"></i>
+                        <h3>Track Progress</h3>
+                        <p>Monitor your learning journey</p>
+                    </div>
+                    <div class="highlight-card">
+                        <i class="fas fa-users fa-3x"></i>
+                        <h3>Collaborative Learning</h3>
+                        <p>Connect with peers and educators</p>
+                    </div>
+                    <div class="highlight-card">
+                        <i class="fas fa-mobile-alt fa-3x"></i>
+                        <h3>Access Anywhere</h3>
+                        <p>Learn on any device, anytime</p>
+                    </div>
+                </div>
+                <div class="register-highlight">
+                    <p>Ready to boost your learning productivity?</p>
+                    <button onclick="switchScreen('register-screen')"><i class="fas fa-rocket"></i> Get Started Now</button>
+                </div>
+            </div>
+            <footer>
+                <p>© 2025 ANUSASANA. All rights reserved.</p>
+                <p><a href="#">Contact Us</a> | <a href="#">Privacy Policy</a> | <a href="#">Support</a> | <a href="#">About</a></p>
+                <p>Email: support@anusasana.com | Phone: +1-800-123-4567</p>
+            </footer>
+        </div>
+
+        <!-- Register Screen -->
+        <div id="register-screen" class="screen">
+            <div class="auth-panel">
+                <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+                <form id="register-form">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="name" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" placeholder="Password" required minlength="6">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-user-tag"></i>
+                        <select name="role" required>
+                            <option value="" disabled selected>Select Role</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-university"></i>
+                        <input type="text" name="college" placeholder="College/School Name" required>
+                    </div>
+                    <button type="submit" id="register-btn">
+                        <i class="fas fa-user-plus"></i> Register 
+                        <span class="spinner hidden"></span>
+                    </button>
+                    <div class="auth-links">
+                        <span>Already have an account?</span>
+                        <a href="#" onclick="switchScreen('login-screen'); return false;">Login here</a>
+                    </div>
+                </form>
+                <p id="auth-message" class="auth-message"></p>
+                <button class="back-btn" onclick="switchScreen('home-screen')">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="login-screen" class="screen">
+            <div class="auth-panel">
+                <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                <form id="login-form">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" id="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> Login 
+                        <span class="spinner hidden"></span>
+                    </button>
+                    <div class="auth-links">
+                        <span>Don't have an account?</span>
+                        <a href="#" onclick="switchScreen('register-screen'); return false;">Register here</a>
+                    </div>
+                </form>
+                <p id="login-message" class="auth-message"></p>
+                <button class="back-btn" onclick="switchScreen('home-screen')">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Student Dashboard -->
+        <div id="student-dashboard" class="screen">
+            <div class="dashboard-header">
+                <div class="card profile-card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h4><i class="fas fa-user-circle"></i> My Profile</h4>
+                        <span><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="card-content">
+                        <div class="id-display">
+                            <span>STUDENT ID</span>
+                            <p id="student-profile-id">Loading...</p>
+                        </div>
+                        <p><strong>Name:</strong> <span id="student-profile-name"></span></p>
+                        <p><strong>College:</strong> <span id="student-profile-college"></span></p>
+                        <p><strong>Mentor:</strong> <span id="student-profile-mentor">Not assigned yet</span></p>
+                        <select id="student-mentor-select" class="select-mentor">
+                            <option value="">Select a Mentor</option>
+                        </select>
+                        <button onclick="logout()" class="small-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-container">
+                <div class="sidebar">
+                    <h2>Welcome, <span id="student-dashboard-name"></span></h2>
+                    <ul>
+                        <li class="active" onclick="showStudentSection('assignments')"><i class="fas fa-tasks"></i> Assignments</li>
+                        <li onclick="showStudentSection('grades')"><i class="fas fa-graduation-cap"></i> Grades</li>
+                        <li onclick="showStudentSection('classes')"><i class="fas fa-book"></i> Classes</li>
+                        <li onclick="showStudentSection('messages')"><i class="fas fa-envelope"></i> Messages</li>
+                        <li onclick="showStudentSection('announcements')"><i class="fas fa-bullhorn"></i> Announcements</li>
+                        <li onclick="showStudentSection('doubts')"><i class="fas fa-question-circle"></i> Ask a Doubt</li>
+                        <li onclick="showStudentSection('calendar')"><i class="fas fa-calendar"></i> Calendar</li>
+                        <li onclick="showStudentSection('overview')"><i class="fas fa-chart-bar"></i> Overview</li>
+                        <li onclick="toggleChatBox()"><i class="fas fa-comment-dots"></i> Support Chat</li>
+                        <li onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+                    </ul>
+                </div>
+                <div class="main-content">
+                    <div id="student-assignments" class="content-panel active">
+                        <h3><i class="fas fa-tasks"></i> Assignments</h3>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Submit New Assignment</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <form id="submit-assignment-form" class="dashboard-form" onsubmit="submitAssignment(event); return false;">
+                                    <div class="input-group">
+                                        <i class="fas fa-edit"></i>
+                                        <input type="text" id="assignment-name" name="assignment-name" placeholder="Assignment Name" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <i class="fas fa-file-alt"></i>
+                                        <select id="assignment-subject" name="assignment-subject" required>
+                                            <option value="" disabled selected>Select Subject</option>
+                                            <option value="mathematics">Mathematics</option>
+                                            <option value="science">Science</option>
+                                            <option value="english">English</option>
+                                            <option value="history">History</option>
+                                            <option value="geography">Geography</option>
+                                        </select>
+                                    </div>
+                                    <div class="file-upload-container">
+                                        <div class="file-upload-wrapper">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <p>Upload your handwritten assignment</p>
+                                            <input type="file" id="assignment-file" name="assignment-file" accept="image/*" required>
+                                        </div>
+                                        <p class="file-upload-info">Supported formats: JPG, PNG, PDF (Max 10MB)</p>
+                                        <div id="upload-preview"></div>
+                                    </div>
+                                    <div class="form-group ocr-note">
+                                        <i class="fas fa-magic"></i>
+                                        <p>Our OCR system will automatically read and grade your handwritten work.</p>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane"></i> Submit Assignment
+                                        <span class="spinner hidden"></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>My Assignments</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div id="student-assignments-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="student-grades" class="content-panel">
+                        <h3><i class="fas fa-graduation-cap"></i> My Grades</h3>
+                        <div class="grades-summary">
+                            <div class="grade-card">
+                                <h4>Overall Grade</h4>
+                                <div class="grade-circle">
+                                    <span id="overall-grade">--</span>
+                                </div>
+                            </div>
+                            <div class="grade-card">
+                                <h4>Completed</h4>
+                                <div class="grade-stat">
+                                    <span id="completed-assignments">0</span>/<span id="total-grade-assignments">0</span>
+                                </div>
+                            </div>
+                            <div class="grade-card">
+                                <h4>Average Score</h4>
+                                <div class="grade-stat">
+                                    <span id="average-grade-score">0</span>%
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Graded Assignments</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div id="student-grades-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="student-messages" class="content-panel">
+                        <h3><i class="fas fa-envelope"></i> Messages</h3>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Send Message to Teacher</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <form id="student-send-message-form" class="form">
+                                    <div class="form-group">
+                                        <label for="student-receiver-id">Teacher ID</label>
+                                        <div class="search-container">
+                                            <input type="text" id="student-receiver-id" name="receiver-id" placeholder="Enter TCH-XXX ID" class="search-input" required>
+                                            <button type="button" class="btn btn-sm" onclick="lookupReceiverById('student')">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                        <div id="student-receiver-info" class="info-text"></div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="student-message">Message</label>
+                                        <textarea id="student-message" name="message" placeholder="Type your message here" rows="3" required></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <button type="submit" id="student-send-message-btn" class="btn btn-primary" disabled>
+                                            <span class="spinner hidden"></span>
+                                            Send Message
+                                        </button>
+                                    </div>
+                                    <div id="student-message-status" class="status-message"></div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>My Messages</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div id="student-messages-list" class="messages-list">
+                                    <div class="loading-spinner" id="student-messages-loading">
+                                        <div class="spinner"></div>
+                                        <p>Loading messages...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="student-announcements" class="content-panel">
+                        <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
+                        <div id="student-announcements-list"></div>
+                    </div>
+                    <div id="student-doubts" class="content-panel">
+                        <h3><i class="fas fa-question-circle"></i> Ask a Doubt</h3>
+                        <form class="dashboard-form" onsubmit="askDoubt(event); return false;">
+                            <textarea id="doubt-text" name="doubt-text" placeholder="Ask your question..." required></textarea>
+                            <button type="submit" class="small-btn"><i class="fas fa-question-circle"></i> Ask</button>
+                        </form>
+                        <div id="doubt-response"></div>
+                    </div>
+                    <div id="student-calendar" class="content-panel">
+                        <h3><i class="fas fa-calendar"></i> Calendar</h3>
+                        <div id="student-calendar-list"></div>
+                    </div>
+                    <div id="student-overview" class="content-panel">
+                        <h3><i class="fas fa-chart-bar"></i> Overview</h3>
+                        <div class="overview">
+                            <div class="overview-item"><h3>Total Assignments</h3><p id="total-assignments">0</p></div>
+                            <div class="overview-item"><h3>Submitted</h3><p id="submitted-assignments">0</p></div>
+                            <div class="overview-item"><h3>Average Score</h3><p id="average-score">N/A</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher Dashboard -->
+        <div id="teacher-dashboard" class="screen">
+            <div class="dashboard-header">
+                <div class="card profile-card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <h4><i class="fas fa-user-circle"></i> My Profile</h4>
+                        <span><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="card-content">
+                        <div class="id-display">
+                            <span>TEACHER ID</span>
+                            <p id="teacher-profile-id">Loading...</p>
+                        </div>
+                        <p><strong>Name:</strong> <span id="teacher-profile-name"></span></p>
+                        <p><strong>College:</strong> <span id="teacher-profile-college"></span></p>
+                        <button onclick="logout()" class="small-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-container">
+                <div class="sidebar">
+                    <h2>Welcome, <span id="teacher-dashboard-name"></span></h2>
+                    <ul>
+                        <li class="active" onclick="showTeacherSection('tasks')"><i class="fas fa-tasks"></i> Assign Tasks</li>
+                        <li onclick="showTeacherSection('submissions')"><i class="fas fa-file-alt"></i> Submissions</li>
+                        <li onclick="showTeacherSection('ocr-settings')"><i class="fas fa-cogs"></i> OCR Settings</li>
+                        <li onclick="showTeacherSection('classes')"><i class="fas fa-book"></i> Upload Class</li>
+                        <li onclick="showTeacherSection('announcements')"><i class="fas fa-bullhorn"></i> Announcements</li>
+                        <li onclick="showTeacherSection('messages')"><i class="fas fa-envelope"></i> Messages</li>
+                        <li onclick="showTeacherSection('doubts')"><i class="fas fa-question-circle"></i> Student Doubts</li>
+                        <li onclick="showTeacherSection('analytics')"><i class="fas fa-chart-bar"></i> Analytics</li>
+                        <li onclick="showTeacherSection('students')"><i class="fas fa-users"></i> Students</li>
+                        <li onclick="toggleChatBox()"><i class="fas fa-comment-dots"></i> Support Chat</li>
+                        <li onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+                    </ul>
+                </div>
+                <div class="main-content">
+                    <div id="teacher-tasks" class="content-panel active">
+                        <h3><i class="fas fa-tasks"></i> Assign Task</h3>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>New Assignment</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <form class="dashboard-form" onsubmit="assignTask(event); return false;">
+                                    <div class="form-row">
+                                        <div class="input-group">
+                                            <i class="fas fa-user"></i>
+                                            <input type="text" id="task-student-id" name="student-id" placeholder="Student ID" required>
+                                        </div>
+                                        <div class="input-group">
+                                            <i class="fas fa-edit"></i>
+                                            <input type="text" id="task-name" name="task-name" placeholder="Task Name" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="input-group">
+                                            <i class="fas fa-book"></i>
+                                            <select id="task-subject" name="task-subject" required>
+                                                <option value="" disabled selected>Select Subject</option>
+                                                <option value="mathematics">Mathematics</option>
+                                                <option value="science">Science</option>
+                                                <option value="english">English</option>
+                                                <option value="history">History</option>
+                                                <option value="geography">Geography</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="input-group">
+                                            <i class="fas fa-calendar"></i>
+                                            <input type="date" id="task-due-date" name="task-due-date" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="ocr-grading-container">
+                                        <h4><i class="fas fa-robot"></i> OCR Auto-Grading</h4>
+                                        <div class="ocr-settings">
+                                            <div class="input-group">
+                                                <label for="grading-keywords">Keywords/Expected Answers:</label>
+                                                <textarea id="grading-keywords" name="grading-keywords" placeholder="Enter keywords or expected answers separated by commas" rows="4"></textarea>
+                                            </div>
+                                            <div class="input-group">
+                                                <label for="grading-tolerance">Grading Tolerance:</label>
+                                                <select id="grading-tolerance" name="grading-tolerance">
+                                                    <option value="strict">Strict - Exact matches only</option>
+                                                    <option value="normal" selected>Normal - Allow minor variations</option>
+                                                    <option value="lenient">Lenient - Focus on key concepts</option>
+                                                </select>
+                                            </div>
+                                            <div class="input-group">
+                                                <label for="auto-grading-enabled">Enable Auto-Grading:</label>
+                                                <div class="toggle-switch">
+                                                    <input type="checkbox" id="auto-grading-enabled" name="auto-grading-enabled" checked>
+                                                    <label for="auto-grading-enabled"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> Assign Task
+                                        <span class="spinner hidden"></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="teacher-submissions" class="content-panel">
+                        <h3><i class="fas fa-file-alt"></i> Student Submissions</h3>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Search Submissions</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div class="search-container">
+                                    <div class="input-group">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" id="submission-student-id-search" placeholder="Enter Student ID" class="search-input">
+                                    </div>
+                                    <button onclick="searchStudentSubmissions()" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                </div>
+                                
+                                <div class="filter-options">
+                                    <div class="input-group">
+                                        <i class="fas fa-filter"></i>
+                                        <select id="submission-status-filter">
+                                            <option value="all">All Submissions</option>
+                                            <option value="graded">Graded</option>
+                                            <option value="ungraded">Ungraded</option>
+                                            <option value="auto-graded">Auto-Graded</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <i class="fas fa-book"></i>
+                                        <select id="submission-subject-filter">
+                                            <option value="all">All Subjects</option>
+                                            <option value="mathematics">Mathematics</option>
+                                            <option value="science">Science</option>
+                                            <option value="english">English</option>
+                                            <option value="history">History</option>
+                                            <option value="geography">Geography</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Student Submissions</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div id="teacher-assignments-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="teacher-ocr-settings" class="content-panel">
+                        <h3><i class="fas fa-cogs"></i> OCR Settings</h3>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Auto-Grading Configuration</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <form id="ocr-settings-form" class="dashboard-form">
+                                    <div class="input-group">
+                                        <label for="default-ocr-mode">Default OCR Mode:</label>
+                                        <select id="default-ocr-mode" name="default-ocr-mode">
+                                            <option value="standard">Standard - General purpose</option>
+                                            <option value="math">Mathematics - Formula recognition</option>
+                                            <option value="handwriting">Advanced Handwriting</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="input-group">
+                                        <label for="default-tolerance">Default Grading Tolerance:</label>
+                                        <select id="default-tolerance" name="default-tolerance">
+                                            <option value="strict">Strict - Exact matches only</option>
+                                            <option value="normal" selected>Normal - Allow minor variations</option>
+                                            <option value="lenient">Lenient - Focus on key concepts</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="input-group">
+                                        <label for="auto-feedback">Generate Automatic Feedback:</label>
+                                        <div class="toggle-switch">
+                                            <input type="checkbox" id="auto-feedback" name="auto-feedback" checked>
+                                            <label for="auto-feedback"></label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="input-group">
+                                        <label for="review-threshold">Review Threshold (%):</label>
+                                        <input type="range" id="review-threshold" name="review-threshold" min="0" max="100" value="70">
+                                        <span id="threshold-value">70%</span>
+                                        <p class="setting-help">Submissions scoring below this threshold will be flagged for manual review</p>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Settings
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Subject-Specific Keywords</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div class="tabs">
+                                    <div class="tab active" data-subject="mathematics">Mathematics</div>
+                                    <div class="tab" data-subject="science">Science</div>
+                                    <div class="tab" data-subject="english">English</div>
+                                    <div class="tab" data-subject="history">History</div>
+                                    <div class="tab" data-subject="geography">Geography</div>
+                                </div>
+                                
+                                <div class="tab-content active" id="mathematics-keywords">
+                                    <textarea placeholder="Enter commonly used mathematics keywords and equations separated by commas" rows="6"></textarea>
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="fas fa-save"></i> Save Mathematics Keywords
+                                    </button>
+                                </div>
+                                
+                                <!-- Other subject tabs would follow the same pattern -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="teacher-students" class="content-panel">
+                        <h3><i class="fas fa-users"></i> Student Management</h3>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Student Directory</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div class="search-container">
+                                    <div class="input-group">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" id="student-directory-search" placeholder="Search by name or ID" class="search-input">
+                                    </div>
+                                    <button onclick="searchStudents()" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                </div>
+                                
+                                <div id="students-list" class="students-list">
+                                    <div class="loading-spinner" id="students-loading">
+                                        <div class="spinner"></div>
+                                        <p>Loading students...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Student Performance</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div class="student-performance-chart-container">
+                                    <canvas id="student-performance-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="teacher-messages" class="content-panel">
+                        <h3><i class="fas fa-envelope"></i> Messages</h3>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Send Message to Student</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <form id="teacher-send-message-form" class="form">
+                                    <div class="form-group">
+                                        <label for="teacher-receiver-id">Student ID</label>
+                                        <div class="search-container">
+                                            <input type="text" id="teacher-receiver-id" name="receiver-id" placeholder="Enter STU-XXX ID" class="search-input" required>
+                                            <button type="button" class="btn btn-sm" onclick="lookupReceiverById('teacher')">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                        <div id="teacher-receiver-info" class="info-text"></div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="teacher-message">Message</label>
+                                        <textarea id="teacher-message" name="message" placeholder="Type your message here" rows="3" required></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <button type="submit" id="teacher-send-message-btn" class="btn btn-primary" disabled>
+                                            <span class="spinner hidden"></span>
+                                            Send Message
+                                        </button>
+                                    </div>
+                                    <div id="teacher-message-status" class="status-message"></div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Filter Messages</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div class="form-group">
+                                    <label for="message-student-id-search">Filter by Student ID</label>
+                                    <div class="search-container">
+                                        <input type="text" id="message-student-id-search" placeholder="Enter STU-XXX ID" class="search-input">
+                                        <button type="button" class="btn btn-sm" onclick="searchStudentMessages()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Messages</h3>
+                                <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <div class="card-content">
+                                <div id="teacher-messages-list" class="messages-list">
+                                    <div class="loading-spinner" id="teacher-messages-loading">
+                                        <div class="spinner"></div>
+                                        <p>Loading messages...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Chat Box (visible only in dashboards) -->
+    <div id="floating-chat" class="chat-box dashboard-only-chat">
+        <div class="chat-header">
+            <span><i class="fas fa-headset"></i> Support Chat</span>
+            <div class="chat-controls">
+                <button id="minimize-chat"><i class="fas fa-minus"></i></button>
+                <button id="close-chat"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="chat-body">
+            <div id="chat-messages"></div>
+            <form id="chat-form">
+                <input type="text" id="chat-input" placeholder="Type a message..." required>
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+    <button id="open-chat" class="chat-button dashboard-only-chat"><i class="fas fa-comment-dots"></i></button>
+
+    <script src="/script.js"></script>
+</body>
+</html> 
